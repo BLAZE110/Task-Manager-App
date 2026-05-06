@@ -85,32 +85,36 @@ npm run dev
 
 ---
 
-## ☁️ Deploying to Cloud
+## ☁️ Deploying to Cloud (Railway)
 
-### 1. Database & Backend (Railway)
+This application is configured for a unified deployment on Railway, where the backend Node.js server serves both the API and the static React frontend files.
+
+### 1. Railway Setup
 1. Create a new project at [railway.app](https://railway.app).
 2. Add a **PostgreSQL** database plugin.
 3. Add a **New GitHub Repo** → select this repository.
-4. Go to **Settings** → **Root Directory** → set to `/server`.
-5. Set **Custom Start Command**: `npm run migrate:deploy && npm start`
-6. Set Environment Variables:
-   - `DATABASE_URL`: Your Railway Postgres URL
-   - `JWT_SECRET`, `JWT_REFRESH_SECRET`: Secure strings
-   - `JWT_ACCESS_EXPIRY`: `15m`
-   - `JWT_REFRESH_EXPIRY`: `7d`
-   - `NODE_ENV`: `production`
-   - `PORT`: `5000`
-   - `CLIENT_URL`: *(Leave blank initially, update to your Vercel URL later)*
-7. Generate a Domain and copy it (this is your `BACKEND_URL`).
 
-### 2. Frontend (Vercel)
-1. Import your GitHub repository at [vercel.com](https://vercel.com).
-2. During setup, click **Edit** on the **Root Directory** setting and select `client`.
-3. Vercel will auto-detect Vite as the framework.
-4. Expand **Environment Variables** and add:
-   - `VITE_API_URL`: Paste your `BACKEND_URL` from Railway (e.g., `https://your-railway-app.up.railway.app`). No trailing slash.
-5. Click **Deploy**. Vercel will build and host your frontend 24x7 for free.
+### 2. Configure Service
+1. Go to **Settings** → **Root Directory** → set to `/` (the root of the repo).
+2. Set **Build Command**:
+   ```bash
+   npm install --prefix client && npm run build --prefix client && npm install --prefix server
+   ```
+3. Set **Start Command**:
+   ```bash
+   npm run migrate:deploy --prefix server && npm start --prefix server
+   ```
 
-### 3. Connect Backend to Frontend
-- Go back to your Railway Backend Service variables.
-- Update `CLIENT_URL` and set it to your new Vercel Frontend Domain (no trailing slash).
+### 3. Environment Variables
+In the Railway dashboard, navigate to the **Variables** tab for your web service and add:
+- `DATABASE_URL`: *(Reference your Railway Postgres variable)*
+- `JWT_SECRET`: *(A secure random string)*
+- `JWT_REFRESH_SECRET`: *(A secure random string)*
+- `JWT_ACCESS_EXPIRY`: `15m`
+- `JWT_REFRESH_EXPIRY`: `7d`
+- `NODE_ENV`: `production`
+- `PORT`: `5000`
+
+### 4. Deploy
+- Generate a Domain in the Railway settings and deploy.
+- This single domain will serve both your React frontend and your backend API automatically.
