@@ -85,15 +85,34 @@ npm run dev
 
 ---
 
-## ☁️ Deploying to Cloud
+## ☁️ Deploying to Cloud (Railway)
 
-### Backend (Railway)
-1. Create a new project at [railway.app](https://railway.app)
-2. Add a **PostgreSQL** plugin
-3. Add a **Web Service** → connect your GitHub repo → set root to `/server`
-4. Set start command: `npx prisma migrate deploy && node src/index.js`
-5. Configure environment variables (JWT secrets, CLIENT_URL)
+This project is configured to run entirely on [Railway.app](https://railway.app/) using a monorepo setup (two services from one repository).
 
-### Frontend (Vercel)
-1. Import client folder at [vercel.com](https://vercel.com)
-2. Set `VITE_API_URL` and `VITE_SOCKET_URL` to your Railway backend URL
+### 1. Database
+- Create a new project on Railway.
+- Add a **PostgreSQL** database plugin.
+
+### 2. Backend Service
+1. Add a **New GitHub Repo** → select this repository.
+2. Go to **Settings** → **Root Directory** → set to `/server`.
+3. Set **Custom Start Command**: `npm run migrate:deploy && npm start`
+4. Set Environment Variables:
+   - `DATABASE_URL`: Your Railway Postgres URL
+   - `JWT_SECRET`, `JWT_REFRESH_SECRET`: Secure strings
+   - `JWT_ACCESS_EXPIRY`: `15m`
+   - `JWT_REFRESH_EXPIRY`: `7d`
+   - `NODE_ENV`: `production`
+   - `PORT`: `5000`
+5. Generate a Domain and copy it (this is your `BACKEND_URL`).
+
+### 3. Frontend Service
+1. Add a **New GitHub Repo** *again* → select this repository.
+2. Go to **Settings** → **Root Directory** → set to `/client`.
+3. Set Environment Variable:
+   - `VITE_API_URL`: Paste your `BACKEND_URL` from Step 2 (no trailing slash).
+4. Generate a Domain (this is your live frontend!).
+
+### 4. Connect Backend to Frontend
+- Go back to your Backend Service variables.
+- Add `CLIENT_URL` and set it to your new Frontend Domain (no trailing slash).
