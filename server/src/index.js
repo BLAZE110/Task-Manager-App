@@ -60,30 +60,13 @@ app.use('/api/projects/:projectId/tasks', taskRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/notifications', notificationRoutes);
 
-// ─── Frontend Static Files / SPA Fallback ────────────
-const path = require('path');
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../../client/dist')));
-  
-  app.get('*', (req, res) => {
-    if (req.originalUrl.startsWith('/api')) {
-      res.status(404).json({
-        success: false,
-        message: `Route ${req.originalUrl} not found`,
-      });
-    } else {
-      res.sendFile(path.resolve(__dirname, '../../client/dist/index.html'));
-    }
+// ─── 404 Handler ─────────────────────────────────────
+app.use('*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `Route ${req.originalUrl} not found`,
   });
-} else {
-  // ─── 404 Handler for Development ─────────────────────
-  app.use('*', (req, res) => {
-    res.status(404).json({
-      success: false,
-      message: `Route ${req.originalUrl} not found`,
-    });
-  });
-}
+});
 
 // ─── Global Error Handler ────────────────────────────
 app.use(errorHandler);
