@@ -85,34 +85,32 @@ npm run dev
 
 ---
 
-## ☁️ Deploying to Cloud (Railway)
+## ☁️ Deploying to Cloud
 
-This project is configured to run entirely on [Railway.app](https://railway.app/) using a monorepo setup (two services from one repository).
-
-### 1. Database
-- Create a new project on Railway.
-- Add a **PostgreSQL** database plugin.
-
-### 2. Backend Service
-1. Add a **New GitHub Repo** → select this repository.
-2. Go to **Settings** → **Root Directory** → set to `/server`.
-3. Set **Custom Start Command**: `npm run migrate:deploy && npm start`
-4. Set Environment Variables:
+### 1. Database & Backend (Railway)
+1. Create a new project at [railway.app](https://railway.app).
+2. Add a **PostgreSQL** database plugin.
+3. Add a **New GitHub Repo** → select this repository.
+4. Go to **Settings** → **Root Directory** → set to `/server`.
+5. Set **Custom Start Command**: `npm run migrate:deploy && npm start`
+6. Set Environment Variables:
    - `DATABASE_URL`: Your Railway Postgres URL
    - `JWT_SECRET`, `JWT_REFRESH_SECRET`: Secure strings
    - `JWT_ACCESS_EXPIRY`: `15m`
    - `JWT_REFRESH_EXPIRY`: `7d`
    - `NODE_ENV`: `production`
    - `PORT`: `5000`
-5. Generate a Domain and copy it (this is your `BACKEND_URL`).
+   - `CLIENT_URL`: *(Leave blank initially, update to your Vercel URL later)*
+7. Generate a Domain and copy it (this is your `BACKEND_URL`).
 
-### 3. Frontend Service
-1. Add a **New GitHub Repo** *again* → select this repository.
-2. Go to **Settings** → **Root Directory** → set to `/client`.
-3. Set Environment Variable:
-   - `VITE_API_URL`: Paste your `BACKEND_URL` from Step 2 (no trailing slash).
-4. Generate a Domain (this is your live frontend!).
+### 2. Frontend (Vercel)
+1. Import your GitHub repository at [vercel.com](https://vercel.com).
+2. During setup, click **Edit** on the **Root Directory** setting and select `client`.
+3. Vercel will auto-detect Vite as the framework.
+4. Expand **Environment Variables** and add:
+   - `VITE_API_URL`: Paste your `BACKEND_URL` from Railway (e.g., `https://your-railway-app.up.railway.app`). No trailing slash.
+5. Click **Deploy**. Vercel will build and host your frontend 24x7 for free.
 
-### 4. Connect Backend to Frontend
-- Go back to your Backend Service variables.
-- Add `CLIENT_URL` and set it to your new Frontend Domain (no trailing slash).
+### 3. Connect Backend to Frontend
+- Go back to your Railway Backend Service variables.
+- Update `CLIENT_URL` and set it to your new Vercel Frontend Domain (no trailing slash).
